@@ -15,11 +15,12 @@ namespace Joyride
         //TODO: Consider abstracting driver 
         private static AppiumDriver<IWebElement> _driver;
 
+        public const int DefaultCommandTimeoutSeconds = 60;
         public const int DefaultWaitSeconds = 30;
         public static Platform Platform { get; set; }
         
         //TODO: unlikely to fix but not thread safe
-        public static void Initialize(Uri hostUri, Platform platform, DesiredCapabilities capabilities)
+        public static void Initialize(Uri hostUri, Platform platform, DesiredCapabilities capabilities, int commandTimeout = DefaultCommandTimeoutSeconds)
         {
             if (_driver != null)
                 throw new Exception("Unable to create multiple instances of appium driver");
@@ -28,10 +29,10 @@ namespace Joyride
             switch (platform)
             {
                 case Platform.Android:
-                    _driver = new AndroidDriver<IWebElement>(hostUri, capabilities);
+                    _driver = new AndroidDriver<IWebElement>(hostUri, capabilities, TimeSpan.FromSeconds(commandTimeout));
                     break;
                 case Platform.Ios:
-                    _driver = new IOSDriver<IWebElement>(hostUri, capabilities);
+                    _driver = new IOSDriver<IWebElement>(hostUri, capabilities, TimeSpan.FromSeconds(commandTimeout));
                     break;
                 default:
                     throw new Exception("Unsupported driver for platform:  " + platform);
